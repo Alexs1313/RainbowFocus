@@ -1,0 +1,17 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/Inknut400.ttf",
+      "sha1": "55cac314b62522af19c4e7ba38186e087635612e"
+    },
+    {
+      "path": "src/assets/fonts/Inknut600.ttf",
+      "sha1": "0b1479636df21b0656df12e2115342a09683b444"
+    },
+    {
+      "path": "src/assets/fonts/Inknut800.ttf",
+      "sha1": "9b45706af8606d7f8f2a759dab6d31f1fbb2e717"
+    }
+  ]
+}
