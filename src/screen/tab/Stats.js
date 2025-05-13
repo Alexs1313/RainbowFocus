@@ -1,16 +1,41 @@
-import {useNavigation} from '@react-navigation/native';
-import {useState} from 'react';
-import {Share, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import Svg, {G, Path, Circle} from 'react-native-svg';
+import {
+  ScrollView,
+  Share,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {useStore} from '../../store/context';
 
 const Stats = () => {
-  const [selectedSegment, setSelectedSegment] = useState(null);
-  const navigation = useNavigation();
+  const {focused, totalQuotes, selectedSegment} = useStore();
+
+  const initialColors = [
+    '#CC73FF',
+    '#FF5B5B',
+    '#FFAA56',
+    '#FFFB89',
+    '#5DFF5D',
+    '#61C1FF',
+    '#5252FF',
+  ];
+
+  const convertToHoursAndMinutes = seconds => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    return {hours, minutes};
+  };
+
+  const totalSeconds = focused.reduce((sum, seconds) => sum + seconds, 0);
+
+  const totalTime = convertToHoursAndMinutes(totalSeconds);
 
   const onShare = async () => {
     try {
       await Share.share({
-        message: 'helo',
+        message: `Focused time: ${totalTime.hours} hours ${totalTime.minutes} minutes ,
+Recieved quotes: ${totalQuotes}`,
       });
     } catch (error) {
       alert(error.message);
@@ -19,29 +44,41 @@ const Stats = () => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#055426'}}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Statistics</Text>
-      </View>
-      <View style={{marginHorizontal: 28}}>
-        <Text style={styles.sectionText}>Most popular color:</Text>
-        <View style={styles.colorContainer}></View>
-        <Text style={styles.sectionText}>Focused time:</Text>
-        <View style={styles.sectionContainer}>
-          <Text>fdff</Text>
+      <ScrollView>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Statistics</Text>
         </View>
-        <Text style={styles.sectionText}>Recieved quotes:</Text>
-        <View style={styles.sectionContainer}>
-          <Text>ffdff</Text>
+        <View style={{marginHorizontal: 28}}>
+          <Text style={styles.sectionText}>Most popular color:</Text>
+          <View
+            style={[
+              styles.colorContainer,
+              {backgroundColor: initialColors[selectedSegment]},
+              selectedSegment === null && {
+                backgroundColor: '#fff',
+                borderRadius: 12,
+              },
+            ]}></View>
+          <Text style={styles.sectionText}>Focused time:</Text>
+          <View style={styles.sectionContainer}>
+            <Text style={styles.secondaryText}>
+              {totalTime.hours} hours {totalTime.minutes} minutes
+            </Text>
+          </View>
+          <Text style={styles.sectionText}>Recieved quotes:</Text>
+          <View style={styles.sectionContainer}>
+            <Text style={styles.secondaryText}>{totalQuotes} quotes</Text>
+          </View>
         </View>
-      </View>
-      <View style={{marginHorizontal: 85, marginTop: 94}}>
-        <TouchableOpacity
-          style={styles.button}
-          activeOpacity={0.7}
-          onPress={() => onShare()}>
-          <Text style={styles.buttonText}>Share</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={{marginHorizontal: 85, marginTop: 94, marginBottom: 140}}>
+          <TouchableOpacity
+            style={styles.button}
+            activeOpacity={0.7}
+            onPress={() => onShare()}>
+            <Text style={styles.buttonText}>Share</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -99,11 +136,16 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     width: '100%',
-    height: 60,
     backgroundColor: '#fff',
     borderRadius: 12,
     paddingVertical: 20,
     alignItems: 'center',
+  },
+  secondaryText: {
+    fontSize: 18,
+    fontFamily: 'Inknut800',
+    color: '#000',
+    lineHeight: 30,
   },
 });
 

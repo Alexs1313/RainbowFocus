@@ -6,46 +6,92 @@ import {
   Image,
   TouchableOpacity,
   Animated,
-  Dimensions,
   Easing,
+  ScrollView,
+  ImageBackground,
 } from 'react-native';
-import {quotes} from '../../data/quotes';
 import {CountdownCircleTimer} from 'react-native-countdown-circle-timer';
 import {useNavigation} from '@react-navigation/native';
+import SoundPlayer from 'react-native-sound-player';
+
+import {useStore} from '../../store/context';
+import {quotes} from '../../data/quotes';
 
 const Session = ({route}) => {
-  const segmentIdx = route.params;
   const [isPlayingTimer, setIsPlayingTimer] = useState(true);
   const [currentItem, setCurrentItem] = useState(null);
+  const {sessionTime, saveData, setTotalQuotes, totalQuotes, soundIsEnabled} =
+    useStore();
+  const [receivedQuotes, setReceivedQuotes] = useState(totalQuotes);
+  const [focusedTime, setFocusedTime] = useState(null);
   const progress = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
+  const segmentIdx = route.params;
 
+  const timerDuration = sessionTime * 60;
   const selectedQuote = quotes.find(quote => quote.id === segmentIdx + 1);
 
-  console.log(selectedQuote.quotes);
+  console.log('time', focusedTime);
+
+  useEffect(() => {
+    if (soundIsEnabled) {
+      playSound();
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      stopSound();
+    };
+  }, []);
+
+  useEffect(() => {
+    pickRandomItem();
+    startProgressBar();
+  }, []);
+
+  const playSound = () => {
+    try {
+      SoundPlayer.playAsset(require('../../assets/music.mp3'));
+      SoundPlayer.setNumberOfLoops(-1);
+
+      console.log('play');
+    } catch (e) {
+      console.log(`cannot play the sound file`, e);
+    }
+  };
+
+  const stopSound = () => {
+    try {
+      SoundPlayer.stop();
+    } catch (e) {
+      console.log('Error:', e);
+    }
+  };
 
   const startProgressBar = () => {
     progress.setValue(0);
+
     Animated.timing(progress, {
       toValue: 1,
-      duration: 18000,
+      duration: 180000,
       easing: Easing.linear,
       useNativeDriver: false,
     }).start(() => {
       pickRandomItem();
       startProgressBar();
+      setReceivedQuotes(prev => prev + 1);
     });
+  };
+
+  const stopProgress = () => {
+    progress.stopAnimation();
   };
 
   const pickRandomItem = () => {
     const randomIndex = Math.floor(Math.random() * selectedQuote.quotes.length);
     setCurrentItem(selectedQuote.quotes[randomIndex]);
   };
-
-  useEffect(() => {
-    pickRandomItem();
-    startProgressBar();
-  }, []);
 
   const progressBarWidth = progress.interpolate({
     inputRange: [0, 1],
@@ -68,7 +114,14 @@ const Session = ({route}) => {
         <TouchableOpacity
           activeOpacity={0.7}
           style={styles.timerButton}
-          onPress={() => setIsPlayingTimer(!isPlayingTimer)}>
+          onPress={() => {
+            setIsPlayingTimer(!isPlayingTimer);
+            if (isPlayingTimer) {
+              SoundPlayer.pause();
+            } else {
+              SoundPlayer.resume();
+            }
+          }}>
           {isPlayingTimer ? (
             <Image source={require('../../assets/images/icons/pause.png')} />
           ) : (
@@ -81,49 +134,65 @@ const Session = ({route}) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.headerWrap}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            activeOpacity={0.7}>
-            <Image source={require('../../assets/images/icons/back.png')} />
-          </TouchableOpacity>
+      <ImageBackground
+        source={require('../../assets/images/bg.png')}
+        style={{flex: 1}}>
+        <ScrollView>
+          <View style={styles.header}>
+            <View style={styles.headerWrap}>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.goBack(),
+                    saveData(focusedTime),
+                    stopProgress(),
+                    setTotalQuotes(receivedQuotes);
+                }}
+                activeOpacity={0.7}>
+                <Image source={require('../../assets/images/icons/back.png')} />
+              </TouchableOpacity>
 
-          <Text style={styles.headerText}>
-            Focus Session: {selectedQuote.title}
-          </Text>
-        </View>
-      </View>
-      <View style={{marginHorizontal: 20, alignItems: 'center', marginTop: 18}}>
-        <Text>🔥</Text>
-        <Text style={styles.timerTitle}>
-          “Lock in. No hesitation — just bold movement.”
-        </Text>
-        <CountdownCircleTimer
-          isPlaying={isPlayingTimer}
-          size={300}
-          isGrowing={true}
-          strokeWidth={25}
-          rotation="counterclockwise"
-          trailStrokeWidth={25}
-          duration={10}
-          trailColor="#50915C"
-          colors={['#fff']}>
-          {renderTime}
-        </CountdownCircleTimer>
-
-        <View style={styles.quoteContainer}>
-          <View style={styles.containerProgress}>
-            <View style={styles.progressBarContainer}>
-              <Animated.View
-                style={[styles.progressBar, {width: progressBarWidth}]}
-              />
+              <Text style={styles.headerText}>
+                Focus Session: {selectedQuote.title.toUpperCase()}
+              </Text>
             </View>
-            <Text style={styles.itemText}>Quote</Text>
-            <Text style={styles.quoteText}>{currentItem}</Text>
           </View>
-        </View>
-      </View>
+          <View
+            style={{marginHorizontal: 20, alignItems: 'center', marginTop: 18}}>
+            <Text>🔥</Text>
+            <Text style={styles.timerTitle}>
+              “Lock in. No hesitation — just bold movement.”
+            </Text>
+            <CountdownCircleTimer
+              isPlaying={isPlayingTimer}
+              size={300}
+              isGrowing={true}
+              strokeWidth={25}
+              rotation="counterclockwise"
+              trailStrokeWidth={25}
+              duration={timerDuration}
+              trailColor="#50915C"
+              onUpdate={remainingTime =>
+                setFocusedTime(sessionTime * 60 - remainingTime)
+              }
+              colors={['#fff']}>
+              {renderTime}
+            </CountdownCircleTimer>
+
+            <View style={styles.quoteContainer}>
+              <View style={styles.containerProgress}>
+                <View style={styles.progressBarContainer}>
+                  <Animated.View
+                    style={[styles.progressBar, {width: progressBarWidth}]}
+                  />
+                </View>
+
+                <Text style={styles.itemText}>Quote</Text>
+                <Text style={styles.quoteText}>{currentItem}</Text>
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+      </ImageBackground>
     </View>
   );
 };
@@ -131,7 +200,7 @@ const Session = ({route}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#055426',
+    // backgroundColor: '#055426',
   },
   headerWrap: {
     flexDirection: 'row',
@@ -150,7 +219,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Inknut800',
     color: '#fff',
-    marginLeft: 10,
+    marginLeft: 15,
   },
   timerTitle: {
     fontSize: 22,
@@ -190,6 +259,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 12,
     marginTop: 23,
+    marginBottom: 40,
   },
   containerProgress: {
     justifyContent: 'center',

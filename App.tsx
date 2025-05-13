@@ -1,16 +1,25 @@
 import {NavigationContainer} from '@react-navigation/native';
-import TabNav from './src/navigation/TabNav';
-
-import Onboarding from './src/screen/stack/Onboarding';
 import StackNavigation from './src/navigation/Stack';
+import {StoreProvider} from './src/store/context';
+import Toast from 'react-native-toast-message';
+import {useEffect, useState} from 'react';
 import Loader from './src/components/Loader';
-import {Text, View} from 'react-native';
 
 const App = () => {
+  const [loader, setLoader] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoader(true);
+    }, 5000);
+  }, []);
+
   return (
     <NavigationContainer>
-      <StackNavigation />
-      {/* <Loader /> */}
+      <StoreProvider>
+        {loader ? <StackNavigation /> : <Loader />}
+        <Toast position="top" topOffset={50} />
+      </StoreProvider>
     </NavigationContainer>
   );
 };

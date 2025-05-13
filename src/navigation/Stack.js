@@ -9,7 +9,7 @@ const Stack = createStackNavigator();
 const StackNavigation = () => {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      {/* <Stack.Screen name="Onboarding" component={Onboarding} /> */}
+      <Stack.Screen name="Onboarding" component={Onboarding} />
       <Stack.Screen name="TabNav" component={TabNav} />
       <Stack.Screen name="Session" component={Session} />
       <Stack.Screen name="ArticleCard" component={ArticleCard} />

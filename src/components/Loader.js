@@ -30,10 +30,10 @@ const Loader = () => {
 
   return (
     <View style={styles.container}>
-      {/* <Animated.Image
+      <Animated.Image
         source={require('../assets/images/loader.png')}
         style={{opacity: firstImageOpacity}}
-      /> */}
+      />
     </View>
   );
 };
@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#055426',
   },
 });
 

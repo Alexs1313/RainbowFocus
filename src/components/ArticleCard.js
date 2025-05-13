@@ -14,6 +14,7 @@ import RatingModal from './RatingModal';
 const ArticleCard = ({route}) => {
   const [isVisible, setIsVisible] = useState(false);
   const [rating, setRating] = useState(0);
+  const [submitRating, setSubmitRating] = useState(false);
   const navigation = useNavigation();
   const article = route.params;
 
@@ -78,24 +79,53 @@ const ArticleCard = ({route}) => {
       </ScrollView>
       {isVisible && (
         <RatingModal>
-          <Text style={styles.modalTitle}>Rate this post</Text>
-          <View style={styles.starsContainer}>
-            {[1, 2, 3, 4, 5].map(star => (
-              <TouchableOpacity key={star} onPress={() => handleRating(star)}>
-                {star <= rating ? (
-                  <Image
-                    source={require('../assets/images/icons/filledStar.png')}
-                    tintColor={'#FFC20E'}
-                  />
-                ) : (
-                  <Image source={require('../assets/images/icons/star.png')} />
-                )}
-              </TouchableOpacity>
-            ))}
-          </View>
+          {submitRating ? (
+            <View style={{alignItems: 'center'}}>
+              <Image source={require('../assets/images/icons/check.png')} />
+            </View>
+          ) : (
+            <Text style={styles.modalTitle}>Rate this post</Text>
+          )}
+          {submitRating ? (
+            <View>
+              <Text
+                style={[styles.modalTitle, {marginBottom: 0, marginTop: 5}]}>
+                Thank you!
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.starsContainer}>
+              {[1, 2, 3, 4, 5].map(star => (
+                <TouchableOpacity key={star} onPress={() => handleRating(star)}>
+                  {star <= rating ? (
+                    <Image
+                      source={require('../assets/images/icons/filledStar.png')}
+                      tintColor={'#FFC20E'}
+                    />
+                  ) : (
+                    <Image
+                      source={require('../assets/images/icons/star.png')}
+                    />
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
           <View style={{paddingHorizontal: 50}}>
-            <TouchableOpacity style={styles.rateBtn} activeOpacity={0.7}>
-              <Text style={styles.modalButtonText}>Rate</Text>
+            <TouchableOpacity
+              style={styles.rateBtn}
+              activeOpacity={0.7}
+              onPress={() => {
+                setSubmitRating(true);
+                if (submitRating) {
+                  setIsVisible(false);
+                  setSubmitRating(false);
+                  setRating(0);
+                }
+              }}>
+              <Text style={styles.modalButtonText}>
+                {submitRating ? 'Close' : 'Rate'}
+              </Text>
             </TouchableOpacity>
           </View>
         </RatingModal>
@@ -150,13 +180,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     lineHeight: 22,
   },
-  time: {
-    fontSize: 14,
-    fontWeight: 400,
-    color: '#838383',
-    marginLeft: 5,
-    marginBottom: 6,
-  },
+
   articleContainer: {
     width: '100%',
     paddingVertical: 23,

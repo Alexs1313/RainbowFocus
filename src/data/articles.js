@@ -37,18 +37,13 @@ Platforms like Instagram, YouTube, and TikTok are built to keep you scrolling, n
     text: `We live in a productivity-obsessed world. Our calendars are packed, our to-do lists endless, and our attention scattered. We multitask, context-switch, and constantly chase the next thing — all in the name of being "efficient."
 
 But what are we really getting done?
-
 When everything is important, nothing is. When we say yes to everything, we dilute the time, energy, and focus we could give to what truly matters.
 Doing less isn’t about being lazy. It’s about being intentional.
 
 It means:
-
 Fewer priorities, deeply pursued.
-
 Less noise, more clarity.
-
 Less busywork, more meaningful impact.
-
 By removing the nonessential, we create space for the exceptional.`,
     time: '~4 minutes',
   },

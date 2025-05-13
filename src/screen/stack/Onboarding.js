@@ -1,45 +1,59 @@
 import {useNavigation} from '@react-navigation/native';
-import {useState} from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {useEffect, useState} from 'react';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import Orientation from 'react-native-orientation-locker';
 
 const Onboarding = () => {
   const [step, setStep] = useState(1);
   const navigation = useNavigation();
 
+  useEffect(() => {
+    Orientation.lockToPortrait();
+  }, []);
+
   return (
     <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        {step === 1 && (
-          <Image
-            source={require('../../assets/images/onboardMain.png')}
-            style={styles.image}
-          />
-        )}
-        {step === 2 && (
-          <Image
-            source={require('../../assets/images/onboard2.png')}
-            style={styles.image}
-          />
-        )}
-        {step === 3 && (
-          <Image
-            source={require('../../assets/images/onboard3.png')}
-            style={styles.image}
-          />
-        )}
-        {step === 4 && (
-          <Image
-            source={require('../../assets/images/onboard4.png')}
-            style={styles.image}
-          />
-        )}
-        {step === 5 && (
-          <Image
-            source={require('../../assets/images/onboardMain.png')}
-            style={styles.image}
-          />
-        )}
-      </View>
+      <ScrollView>
+        <View style={styles.imageContainer}>
+          {step === 1 && (
+            <Image
+              source={require('../../assets/images/onboardMain.png')}
+              style={styles.image}
+            />
+          )}
+          {step === 2 && (
+            <Image
+              source={require('../../assets/images/onboard2.png')}
+              style={styles.image}
+            />
+          )}
+          {step === 3 && (
+            <Image
+              source={require('../../assets/images/onboard3.png')}
+              style={styles.image}
+            />
+          )}
+          {step === 4 && (
+            <Image
+              source={require('../../assets/images/onboard4.png')}
+              style={styles.image}
+            />
+          )}
+          {step === 5 && (
+            <Image
+              source={require('../../assets/images/onboardMain.png')}
+              style={styles.image}
+            />
+          )}
+        </View>
+      </ScrollView>
       {step === 1 && (
         <View style={styles.bottomSectionContainer}>
           <Text style={styles.title}>Welcome to Rainbow Focus</Text>
@@ -137,6 +151,7 @@ const styles = StyleSheet.create({
   image: {width: '100%', marginTop: 70},
   imageContainer: {
     alignItems: 'center',
+    marginBottom: 550,
   },
   bottomSectionContainer: {
     width: '100%',

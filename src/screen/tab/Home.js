@@ -1,12 +1,28 @@
 import {useNavigation} from '@react-navigation/native';
-import {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {useEffect, useState} from 'react';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Svg, {G, Path, Circle} from 'react-native-svg';
+import Toast from 'react-native-toast-message';
+
+import {quotes} from '../../data/quotes';
+import {useStore} from '../../store/context';
+import Orientation from 'react-native-orientation-locker';
 
 const Home = () => {
-  const [selectedSegment, setSelectedSegment] = useState(null);
   const [isDisabled, setIsDisabled] = useState(false);
   const navigation = useNavigation();
+  const {isEnabledNotifications, selectedSegment, setSelectedSegment} =
+    useStore();
+
+  useEffect(() => {
+    Orientation.unlockAllOrientations();
+  }, []);
 
   const size = 300;
   const radius = size / 2;
@@ -22,8 +38,6 @@ const Home = () => {
     '#61C1FF',
     '#5252FF',
   ];
-
-  console.log(selectedSegment);
 
   const calculateSlicePath = (startAngle, sweepAngle) => {
     const x1 = 151 + 148 * Math.cos((Math.PI / 180) * startAngle);
@@ -42,58 +56,85 @@ const Home = () => {
                 Z`;
   };
 
+  const selectedQuote = quotes.find(quote => quote.id === selectedSegment + 1);
+
   return (
     <View style={{flex: 1, backgroundColor: '#055426'}}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Choose Your Color of the Day</Text>
-      </View>
-      <View style={styles.container}>
-        <Text style={styles.wheelTitle}>
-          Tap or swipe on colors to see their meanings
-        </Text>
-        <Svg width={310} height={310}>
-          <G>
-            {initialColors.map((color, index) => {
-              const startAngle = index * (sweepAngle + gapAngle); // Add gap for each segment
-              const path = calculateSlicePath(startAngle, sweepAngle);
+      <ScrollView>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Choose Your Color of the Day</Text>
+        </View>
+        <View style={styles.container}>
+          <Text style={styles.wheelTitle}>
+            Tap on colors to see their meanings
+          </Text>
+          <Svg width={310} height={310}>
+            <G>
+              {initialColors.map((color, index) => {
+                const startAngle = index * (sweepAngle + gapAngle); // Add gap for each segment
+                const path = calculateSlicePath(startAngle, sweepAngle);
 
-              const isSelected = selectedSegment === index;
+                const isSelected = selectedSegment === index;
 
-              return (
-                <Path
-                  key={index}
-                  d={path}
-                  fill={color}
-                  stroke={isSelected ? '#fff' : 'none'}
-                  strokeWidth={isSelected ? 4 : 0}
-                  strokeLinejoin="bevel"
-                  onPress={() => {
-                    setSelectedSegment(index), setIsDisabled(true);
-                  }}
-                />
-              );
-            })}
-          </G>
+                return (
+                  <Path
+                    key={index}
+                    d={path}
+                    fill={color}
+                    stroke={isSelected ? '#fff' : 'none'}
+                    strokeWidth={isSelected ? 4 : 0}
+                    strokeLinejoin="round"
+                    onPress={() => {
+                      setSelectedSegment(index), setIsDisabled(true);
+                      if (isEnabledNotifications) {
+                        Toast.show({
+                          text1: `Session selected!`,
+                        });
+                      }
+                    }}
+                  />
+                );
+              })}
+            </G>
 
-          <Circle
-            cx={radius}
-            cy={radius}
-            r={innerRadius / 3.5}
-            fill="#FFFFFF"
-          />
-        </Svg>
-      </View>
-      <View style={{marginHorizontal: 85, marginTop: 94}}>
-        <TouchableOpacity
-          disabled={!isDisabled}
-          style={[styles.button, !isDisabled && {backgroundColor: '#F87B0D33'}]}
-          activeOpacity={0.7}
-          onPress={() => {
-            navigation.navigate('Session', selectedSegment);
-          }}>
-          <Text style={styles.buttonText}>Start session</Text>
-        </TouchableOpacity>
-      </View>
+            <Circle
+              cx={radius}
+              cy={radius}
+              r={innerRadius / 3.5}
+              fill="#FFFFFF"
+            />
+          </Svg>
+        </View>
+
+        <View style={{marginHorizontal: 40}}>
+          {isDisabled && (
+            <View style={styles.sessionContainer}>
+              <View
+                style={[
+                  styles.colorContainer,
+                  {backgroundColor: initialColors[selectedSegment]},
+                ]}
+              />
+              <Text style={styles.sessionText}>{selectedQuote.title}</Text>
+            </View>
+          )}
+        </View>
+
+        <View style={[styles.btnContainer, {marginTop: 10, marginBottom: 140}]}>
+          <TouchableOpacity
+            disabled={!isDisabled}
+            style={[
+              styles.button,
+              !isDisabled && {backgroundColor: '#F87B0D33'},
+            ]}
+            activeOpacity={0.7}
+            onPress={() => {
+              navigation.navigate('Session', selectedSegment);
+            }}>
+            <Text style={styles.buttonText}>Start session</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -135,6 +176,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: '#fff',
+  },
+  sessionContainer: {
+    backgroundColor: '#fff',
+    paddingVertical: 17,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sessionText: {
+    fontSize: 16,
+    fontFamily: 'Inknut400',
+    lineHeight: 30,
+    color: '#000',
+  },
+  colorContainer: {
+    width: '30%',
+    height: 12,
+    backgroundColor: 'red',
+    borderRadius: 12,
+    marginBottom: 5,
+  },
+  btnContainer: {
+    marginHorizontal: 85,
+    marginTop: 94,
   },
 });
 

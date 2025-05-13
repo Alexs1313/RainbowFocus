@@ -32,7 +32,7 @@ const Reading = () => {
         <View style={{marginHorizontal: 25, marginBottom: 140}}>
           <View>
             {articles.map(article => (
-              <View style={styles.articleContainer}>
+              <View style={styles.articleContainer} key={article.id}>
                 <Text style={styles.title}>{article.title}</Text>
                 <Text style={styles.description}>{article.description}</Text>
                 <View style={styles.wrap}>

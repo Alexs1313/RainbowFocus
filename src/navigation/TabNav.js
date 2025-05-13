@@ -13,6 +13,7 @@ const TabNav = () => {
       initialRouteName="Home"
       screenOptions={{
         headerShown: false,
+        tabBarLabelPosition: 'below-icon',
         tabBarStyle: styles.tabBar,
         tabBarLabelStyle: styles.tabBarLabelStyle,
         tabBarIconStyle: styles.tabBarIcon,
@@ -103,6 +104,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     // width: 65,
     // height: 65,
+
     paddingTop: 6,
     paddingBottom: 22,
     paddingHorizontal: 13,
