@@ -1,6 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import {useEffect, useState} from 'react';
 import {
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -39,6 +40,26 @@ const Home = () => {
     '#5252FF',
   ];
 
+  const images = [
+    require('../../assets/images/1.png'),
+    require('../../assets/images/2.png'),
+    require('../../assets/images/3.png'),
+    require('../../assets/images/4.png'),
+    require('../../assets/images/5.png'),
+    require('../../assets/images/6.png'),
+    require('../../assets/images/7.png'),
+  ];
+
+  const selected = [
+    require('../../assets/images/icons/1.png'),
+    require('../../assets/images/icons/2.png'),
+    require('../../assets/images/icons/3.png'),
+    require('../../assets/images/icons/4.png'),
+    require('../../assets/images/icons/5.png'),
+    require('../../assets/images/icons/6.png'),
+    require('../../assets/images/icons/7.png'),
+  ];
+
   const calculateSlicePath = (startAngle, sweepAngle) => {
     const x1 = 151 + 148 * Math.cos((Math.PI / 180) * startAngle);
     const y1 = 151 + 148 * Math.sin((Math.PI / 180) * startAngle);
@@ -50,9 +71,9 @@ const Home = () => {
 
     const largeArc = sweepAngle > 180 ? 1 : 0;
 
-    return `M${radius},${radius} 
-                L${x1},${y1} 
-                A${radius},${radius} 0 ${largeArc} 1 ${x2},${y2} 
+    return `M${radius},${radius}
+                L${x1},${y1}
+                A${radius},${radius} 0 ${largeArc} 1 ${x2},${y2}
                 Z`;
   };
 
@@ -68,42 +89,84 @@ const Home = () => {
           <Text style={styles.wheelTitle}>
             Tap on colors to see their meanings
           </Text>
-          <Svg width={310} height={310}>
-            <G>
-              {initialColors.map((color, index) => {
-                const startAngle = index * (sweepAngle + gapAngle); // Add gap for each segment
-                const path = calculateSlicePath(startAngle, sweepAngle);
 
-                const isSelected = selectedSegment === index;
+          <View>
+            <View
+              style={{
+                marginTop: 180,
+                marginBottom: 150,
+              }}>
+              {images.map((color, idx) => (
+                <TouchableOpacity
+                  key={idx}
+                  activeOpacity={0.8}
+                  onPress={() => {
+                    setSelectedSegment(idx), setIsDisabled(true);
+                    if (isEnabledNotifications) {
+                      Toast.show({
+                        text1: `Session selected!`,
+                      });
+                    }
+                  }}
+                  style={[
+                    styles.image,
+                    idx === 0 && {top: -12, left: 5},
+                    idx === 1 && {top: 1, left: -36},
+                    idx === 2 && {top: -4, right: 7},
+                    idx === 3 && {top: -70, right: 15},
+                    idx === 4 && {bottom: 15, right: 9},
+                    idx === 5 && {bottom: 20, right: -85},
+                    idx === 6 && {bottom: 9, left: 4},
+                  ]}>
+                  <Image source={color} style={{}} />
+                </TouchableOpacity>
+              ))}
+              <Image
+                source={require('../../assets/images/circle.png')}
+                style={{
+                  position: 'absolute',
+                  top: -45,
+                  right: -33,
+                }}
+              />
+            </View>
 
-                return (
-                  <Path
-                    key={index}
-                    d={path}
-                    fill={color}
-                    stroke={isSelected ? '#fff' : 'none'}
-                    strokeWidth={isSelected ? 4 : 0}
-                    strokeLinejoin="round"
-                    onPress={() => {
-                      setSelectedSegment(index), setIsDisabled(true);
-                      if (isEnabledNotifications) {
-                        Toast.show({
-                          text1: `Session selected!`,
-                        });
-                      }
-                    }}
-                  />
-                );
-              })}
-            </G>
+            {/* <Svg width={310} height={310}>
+              <G>
+                {initialColors.map((color, index) => {
+                  const startAngle = index * (sweepAngle + gapAngle);
+                  const path = calculateSlicePath(startAngle, sweepAngle);
 
-            <Circle
-              cx={radius}
-              cy={radius}
-              r={innerRadius / 3.5}
-              fill="#FFFFFF"
-            />
-          </Svg>
+                  const isSelected = selectedSegment === index;
+
+                  return (
+                    <Path
+                      key={index}
+                      d={path}
+                      fill={color}
+                      stroke={isSelected ? '#fff' : 'none'}
+                      strokeWidth={isSelected ? 4 : 0}
+                      strokeLinejoin="round"
+                      onPress={() => {
+                        setSelectedSegment(index), setIsDisabled(true);
+                        if (isEnabledNotifications) {
+                          Toast.show({
+                            text1: `Session selected!`,
+                          });
+                        }
+                      }}
+                    />
+                  );
+                })}
+              </G>
+              <Circle
+                cx={radius}
+                cy={radius}
+                r={innerRadius / 3.5}
+                fill="#FFFFFF"
+              />
+            </Svg> */}
+          </View>
         </View>
 
         <View style={{marginHorizontal: 40}}>
@@ -164,6 +227,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginHorizontal: 40,
     textAlign: 'center',
+    lineHeight: 30,
     marginBottom: 10,
   },
   button: {
@@ -201,6 +265,77 @@ const styles = StyleSheet.create({
     marginHorizontal: 85,
     marginTop: 94,
   },
+  image: {
+    position: 'absolute',
+  },
 });
 
 export default Home;
+
+// import React from 'react';
+// import {View, Image, StyleSheet, TouchableOpacity} from 'react-native';
+
+// const Home = () => {
+//   // Ensure the number of images matches the circle layout
+
+//   const images = [
+//     require('../../assets/images/1.png'),
+//     require('../../assets/images/2.png'),
+//     require('../../assets/images/3.png'),
+//     require('../../assets/images/4.png'),
+//     require('../../assets/images/5.png'),
+//     require('../../assets/images/6.png'),
+//     require('../../assets/images/7.png'),
+//   ];
+
+//   const numImages = images.length;
+//   const angleStep = 360 / numImages;
+
+//   return (
+//     <View style={styles.container}>
+//       <View style={styles.circle}>
+//         {images.map((image, index) => {
+//           const angle = index * angleStep;
+//           const x = 90 * Math.cos((angle * Math.PI) / 180); // X position
+//           const y = 90 * Math.sin((angle * Math.PI) / 180); // Y position
+
+//           return (
+//             <TouchableOpacity
+//               style={[
+//                 styles.image,
+//                 {
+//                   transform: [{translateX: x}, {translateY: y}],
+//                 },
+//               ]}>
+//               <Image key={index} source={image} />
+//             </TouchableOpacity>
+//           );
+//         })}
+//       </View>
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+//   circle: {
+//     width: 300,
+//     height: 300,
+//     borderRadius: 100, // Makes the container a circle
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     position: 'relative',
+//   },
+//   image: {
+//     // width: 50,
+//     // height: 50,
+//     // Makes the images circular
+//     position: 'absolute',
+//   },
+// });
+
+// export default Home;

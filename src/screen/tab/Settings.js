@@ -23,8 +23,6 @@ const Settings = () => {
     setSessionTime,
     setIsEnabledNotifications,
     isEnabledNotifications,
-    setSoundIsEnabled,
-    soundIsEnabled,
   } = useStore();
 
   const toggleNotifications = () =>
@@ -37,9 +35,6 @@ const Settings = () => {
       setSelectedTime(15);
     }
   };
-
-  const toggleSoundEffects = () =>
-    setSoundIsEnabled(previousState => !previousState);
 
   const formatTime = ({minutes}) => {
     if (minutes !== undefined || minutes !== 0) {
@@ -66,16 +61,6 @@ const Settings = () => {
               />
             </View>
 
-            <View style={styles.settingWrap}>
-              <Text style={styles.notificationsText}>Sound Effects</Text>
-              <Switch
-                onValueChange={toggleSoundEffects}
-                value={soundIsEnabled}
-                style={{transform: [{scaleX: 1.4}, {scaleY: 1.4}]}}
-                trackColor={{true: '#34C759', false: 'grey'}}
-                thumbColor={'#fff'}
-              />
-            </View>
             <View style={styles.settingWrap}>
               <Text style={styles.notificationsText}>Default Session Time</Text>
               <Switch

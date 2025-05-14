@@ -7,9 +7,14 @@ import {
   View,
 } from 'react-native';
 import {useStore} from '../../store/context';
+import {useEffect} from 'react';
 
 const Stats = () => {
   const {focused, totalQuotes, selectedSegment} = useStore();
+
+  useEffect(() => {
+    console.log('useefect');
+  });
 
   const initialColors = [
     '#CC73FF',

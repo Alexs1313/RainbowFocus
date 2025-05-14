@@ -10,7 +10,6 @@ export const StoreProvider = ({children}) => {
   const [isEnabledNotifications, setIsEnabledNotifications] = useState(false);
   const [sessionTime, setSessionTime] = useState(15);
   const [timeIsEnabled, setTimeIsEnabled] = useState(false);
-  const [soundIsEnabled, setSoundIsEnabled] = useState(false);
   const [selectedTime, setSelectedTime] = useState(15);
   const [totalQuotes, setTotalQuotes] = useState(0);
   const [focused, setFocused] = useState([]);
@@ -35,8 +34,6 @@ export const StoreProvider = ({children}) => {
     setTotalQuotes,
     selectedSegment,
     setSelectedSegment,
-    soundIsEnabled,
-    setSoundIsEnabled,
   };
 
   return (

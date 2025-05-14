@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import {CountdownCircleTimer} from 'react-native-countdown-circle-timer';
 import {useNavigation} from '@react-navigation/native';
-import SoundPlayer from 'react-native-sound-player';
 
 import {useStore} from '../../store/context';
 import {quotes} from '../../data/quotes';
@@ -30,44 +29,6 @@ const Session = ({route}) => {
 
   const timerDuration = sessionTime * 60;
   const selectedQuote = quotes.find(quote => quote.id === segmentIdx + 1);
-
-  console.log('time', focusedTime);
-
-  useEffect(() => {
-    if (soundIsEnabled) {
-      playSound();
-    }
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      stopSound();
-    };
-  }, []);
-
-  useEffect(() => {
-    pickRandomItem();
-    startProgressBar();
-  }, []);
-
-  const playSound = () => {
-    try {
-      SoundPlayer.playAsset(require('../../assets/music.mp3'));
-      SoundPlayer.setNumberOfLoops(-1);
-
-      console.log('play');
-    } catch (e) {
-      console.log(`cannot play the sound file`, e);
-    }
-  };
-
-  const stopSound = () => {
-    try {
-      SoundPlayer.stop();
-    } catch (e) {
-      console.log('Error:', e);
-    }
-  };
 
   const startProgressBar = () => {
     progress.setValue(0);
