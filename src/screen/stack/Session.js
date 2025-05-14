@@ -19,8 +19,7 @@ import {quotes} from '../../data/quotes';
 const Session = ({route}) => {
   const [isPlayingTimer, setIsPlayingTimer] = useState(true);
   const [currentItem, setCurrentItem] = useState(null);
-  const {sessionTime, saveData, setTotalQuotes, totalQuotes, soundIsEnabled} =
-    useStore();
+  const {sessionTime, saveData, setTotalQuotes, totalQuotes} = useStore();
   const [receivedQuotes, setReceivedQuotes] = useState(totalQuotes);
   const [focusedTime, setFocusedTime] = useState(null);
   const progress = useRef(new Animated.Value(0)).current;
@@ -29,6 +28,11 @@ const Session = ({route}) => {
 
   const timerDuration = sessionTime * 60;
   const selectedQuote = quotes.find(quote => quote.id === segmentIdx + 1);
+
+  useEffect(() => {
+    pickRandomItem();
+    startProgressBar();
+  }, []);
 
   const startProgressBar = () => {
     progress.setValue(0);

@@ -50,16 +50,6 @@ const Home = () => {
     require('../../assets/images/7.png'),
   ];
 
-  const selected = [
-    require('../../assets/images/icons/1.png'),
-    require('../../assets/images/icons/2.png'),
-    require('../../assets/images/icons/3.png'),
-    require('../../assets/images/icons/4.png'),
-    require('../../assets/images/icons/5.png'),
-    require('../../assets/images/icons/6.png'),
-    require('../../assets/images/icons/7.png'),
-  ];
-
   const calculateSlicePath = (startAngle, sweepAngle) => {
     const x1 = 151 + 148 * Math.cos((Math.PI / 180) * startAngle);
     const y1 = 151 + 148 * Math.sin((Math.PI / 180) * startAngle);
@@ -113,7 +103,7 @@ const Home = () => {
                     idx === 0 && {top: -12, left: 5},
                     idx === 1 && {top: 1, left: -36},
                     idx === 2 && {top: -4, right: 7},
-                    idx === 3 && {top: -70, right: 15},
+                    idx === 3 && {top: -71, right: 15},
                     idx === 4 && {bottom: 15, right: 9},
                     idx === 5 && {bottom: 20, right: -85},
                     idx === 6 && {bottom: 9, left: 4},
